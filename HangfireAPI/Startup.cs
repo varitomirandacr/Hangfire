@@ -1,18 +1,15 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Hangfire;
+using Hangfire.Mongo;
+using HangfireAPI.Contract;
+using HangfireAPI.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Hangfire;
-using Hangfire.Mongo;
 using MongoDB.Driver;
+using System;
+using Newtonsoft.Json;
 
 namespace HangfireAPI
 {
@@ -59,6 +56,11 @@ namespace HangfireAPI
             //    UsePageLocksOnDequeue = true,
             //    DisableGlobalLocks = true
             //}));
+
+            services.AddTransient<IProcessService, ProcessService>();
+
+            // https://docs.microsoft.com/en-us/aspnet/core/migration/22-to-30?view=aspnetcore-2.2&tabs=visual-studio#jsonnet-support
+            services.AddControllers().AddNewtonsoftJson();
 
             // Add the processing server as IHostedService
             services.AddHangfireServer();
