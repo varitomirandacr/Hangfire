@@ -23,7 +23,7 @@ namespace HangfireAPI.Controllers
         [HttpPost]
         public void Post([FromBody]string type)
         {
-            switch (type)
+            switch (type.ToLower())
             {
                 default:
                 case "fire":
@@ -42,9 +42,7 @@ namespace HangfireAPI.Controllers
                     _service.Message = "Custom";
                     _service.CustomBatch();
                     break;
-            }
-            
+            }            
         }
-
     }
 }

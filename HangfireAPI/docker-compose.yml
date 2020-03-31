@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  hangfireapi:
+    image: ${DOCKER_REGISTRY-}hangfireapi
+    build:
+      context: .
+      dockerfile: Dockerfile

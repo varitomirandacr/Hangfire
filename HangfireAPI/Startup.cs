@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MongoDB.Driver;
 using System;
+using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 
 namespace HangfireAPI
@@ -40,7 +41,11 @@ namespace HangfireAPI
                 config.SetDataCompatibilityLevel(CompatibilityLevel.Version_170);
                 config.UseSimpleAssemblyNameTypeSerializer();
                 config.UseRecommendedSerializerSettings();
-                config.UseMongoStorage(new MongoClient(mongoConnection), "Hangfire", new MongoStorageOptions { MigrationOptions = migrationOptions });
+                config.UseMongoStorage(new MongoClient(mongoConnection), "Hangfire", new MongoStorageOptions 
+                { 
+                    MigrationOptions = migrationOptions,
+                    CheckConnection = false, 
+                });
             });
 
             // SQL settings
@@ -64,6 +69,12 @@ namespace HangfireAPI
 
             // Add the processing server as IHostedService
             services.AddHangfireServer();
+
+            // Register the Swagger generator, defining 1 or more Swagger documents
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -84,6 +95,16 @@ namespace HangfireAPI
             app.UseRouting();
 
             app.UseAuthorization();
+
+            // Enable middleware to serve generated Swagger as a JSON endpoint.
+            app.UseSwagger();
+
+            // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
+            // specifying the Swagger JSON endpoint.
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+            });
 
             app.UseEndpoints(endpoints =>
             {
